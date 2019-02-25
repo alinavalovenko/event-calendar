@@ -30,7 +30,8 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 				//add_filter('acf/settings/show_admin', '__return_false');
 				include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
 			}
-			add_action( 'init', array( $this, 'avec_acf_init' ) );
+			//add_action( 'init', array( $this, 'avec_acf_init' ) );
+			add_shortcode('av-calendar', array($this, 'avec_calendar_render'));
 		}
 
 		function avec_add_admin_page() {
@@ -53,12 +54,15 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			return $dir;
 		}
 
-		function avec_acf_init() {
-			$option_page = acf_add_options_page( array(
-				'page_title' => __( 'Event Calendar', 'avec' ),
-				'menu_title' => __( 'Event Calendar', 'avec' ),
-				'menu_slug'  => 'event-calendar-page',
-			) );
+//		function avec_acf_init() {
+//			$option_page = acf_add_options_page( array(
+//				'page_title' => __( 'Event Calendar', 'avec' ),
+//				'menu_title' => __( 'Event Calendar', 'avec' ),
+//				'menu_slug'  => 'event-calendar-page',
+//			) );
+//		}
+		function avec_calendar_render(){
+			echo 'Shortcode body';
 		}
 	}
 
