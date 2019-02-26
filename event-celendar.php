@@ -17,6 +17,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		define( 'AVEC_DIR_PATH', plugin_dir_path( __FILE__ ) );
 	}
 	include_once 'include/controller.php';
+	include_once 'include/class-ics.php';
 
 	class AV_Event_Calendar {
 
@@ -84,12 +85,14 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 					$date        = get_field( 'avec_date', $event );
 					$title       = $event->post_title;
 					$description = get_field( 'avec_decription', $event );
-					$summary     = get_field( 'avec_summary', $event );
 					echo '<div>' . $date . '</div>';
 					if ( time() < strtotime( $date ) ) {
+						$download_link = get_post_meta( $event, 'evec_download_link', true );
 						echo '<div>' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
-						echo '<div><a href="' . $this->avec_create_download_link( $event ) . '">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
+						echo '<div><a href="' . $download_link . '">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
 					} else {
+						$summary = get_field( 'avec_summary', $event );
+
 						echo '<div><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
 						echo '<div></div>';
 					}
@@ -142,14 +145,19 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			return $date->format( 'Y' );
 		}
 
-		function avec_create_download_link( $event ) {
-			$link = '#';
+		function avec_create_download_link( $post_id, $ics_data ) {
+			$path      = wp_upload_dir();
+			$file_name = 'avec-' . $post_id . '.ics';
 
-			return $link;
+			$ics_link = $path['url'] . '/' . $file_name;
+			$ics_path = $path['path'] . DIRECTORY_SEPARATOR . $file_name;
+			file_put_contents( $ics_path, $ics_data );
+			update_post_meta( $post_id, 'evec_download_link', $ics_link );
+
+			return $ics_link;
 		}
 
 		public function avec_publish_event_callback( $post_id, $post ) {
-			include 'include/class-ics.php';
 //			header('Content-Type: text/calendar; charset=utf-8');
 //			header('Content-Disposition: attachment; filename=invite.ics');
 			if ( isset( $_POST['acf'] ) ) {
@@ -160,7 +168,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 					'summary'     => $post->post_title,
 				) );
 
-				update_post_meta( $post_id, 'evec_download_link', $ics->to_string() );
+				$this->avec_create_download_link( $post_id, $ics->to_string() );
 
 			}
 		}
