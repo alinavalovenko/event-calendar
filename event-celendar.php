@@ -32,6 +32,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			}
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
 			add_action( 'init', array( $this, 'avec_register_post_types' ) );
+			add_action( 'publish_event', array( $this, 'avec_publish_event_callback' ), 10, 2 );
 
 		}
 
@@ -71,9 +72,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		}
 
 		function avec_calendar_render() {
-			global $post;
 			$events = $this->avec_get_events_by_year();
-			$today  = time();
 			ob_start();
 			echo '<div class="calendar-wrap">';
 			foreach ( $events as $year => $events_list ) {
@@ -147,6 +146,23 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			$link = '#';
 
 			return $link;
+		}
+
+		public function avec_publish_event_callback( $post_id, $post ) {
+			include 'include/class-ics.php';
+//			header('Content-Type: text/calendar; charset=utf-8');
+//			header('Content-Disposition: attachment; filename=invite.ics');
+			if ( isset( $_POST['acf'] ) ) {
+				$ics = new ICS( array(
+					'location'    => $_POST['acf']['field_5c7534c5649fd'],
+					'description' => $_POST['acf']['field_5c7515bf37d87'],
+					'dtstart'     => $_POST['acf']['field_5c75147e53881'],
+					'summary'     => $post->post_title,
+				) );
+
+				update_post_meta( $post_id, 'evec_download_link', $ics->to_string() );
+
+			}
 		}
 
 	}
