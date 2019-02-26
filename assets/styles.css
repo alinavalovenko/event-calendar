@@ -1,0 +1,94 @@
+.calendar-wrap {
+    font-family: 'Legacy Serif ITC W02 Bk', Arial, Helvetica, sans-serif;
+    max-width: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    color: #333;
+    margin-left: 15px;
+}
+
+.calendar-wrap a {
+    display: inline-block;
+    color: #d82034;
+    text-decoration: none;
+    box-shadow: none;
+    text-transform: capitalize;
+    -webkit-transition: color 300ms ease;
+    -moz-transition: color 300ms ease;
+    -ms-transition: color 300ms ease;
+    -o-transition: color 300ms ease;
+    transition: color 300ms ease;
+}
+
+.event-table {
+    display: table;
+    margin: 50px auto 50px 15px;
+    border-spacing: 2px;
+    border-top: 1px solid rgba(128, 128, 128, 0.4);
+    border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.event-table-head {
+    display: table-header-group;
+}
+
+.event-table-head > div {
+    display: table-cell;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.event-table-head div:last-child {
+    opacity: 0;
+}
+
+.event-table-body {
+    display: table-row-group;
+}
+
+.event-table-row {
+    display: table-row;
+    border-top: 1px solid rgba(128, 128, 128, 0.4);
+    border-spacing: 2px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.4);
+}
+
+.event-table-row > div {
+    display: table-cell;
+    padding: 10px 15px;
+}
+
+.event-table-row div.avec-date-value{
+    max-width: 130px;
+    width: 130px;
+}
+
+.calendar-wrap a.avec-link-toggle {
+    font-size: 1.4rem;
+    position: relative;
+}
+
+.calendar-wrap a.avec-link-toggle:before {
+    content: '\002B';
+    left: -15px;
+    position: relative;
+}
+
+.calendar-wrap a.avec-link-toggle.opened:before {
+    content: '\2212' !important;
+    left: -15px;
+    position: relative;
+}
+
+.event-table-body a:hover {
+    color: #333;
+}
+
+.avec-hide {
+    display: none !important;
+}

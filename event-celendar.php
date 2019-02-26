@@ -79,25 +79,28 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			foreach ( $events as $year => $events_list ) {
 				echo '<div class="calendar-year">';
 				echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
-				echo '<div class="event-table">';
+				echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
 				echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
+				echo '<div class="event-table-body">';
 				foreach ( $events_list as $event ) {
+					echo '<div class="event-table-row">';
 					$date        = get_field( 'avec_date', $event );
 					$title       = $event->post_title;
 					$description = get_field( 'avec_decription', $event );
-					echo '<div>' . $date . '</div>';
+					echo '<div class="avec-date-value">' . $date . '</div>';
 					if ( time() < strtotime( $date ) ) {
 						$download_link = get_post_meta( $event->ID, 'evec_download_link', true );
-						echo '<div>' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
-						echo '<div><a href="' . $download_link . '">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
+						echo '<div class="avec-title-value">' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
+						echo '<div class="avec-link-value"><a href="' . $download_link . '" target="_blank">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
 					} else {
 						$summary = get_field( 'avec_summary', $event );
 
-						echo '<div><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
+						echo '<div class="avec-title-value"><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
 						echo '<div></div>';
 					}
-
+					echo '</div>';
 				}
+				echo '</div>';
 				echo '</div>';
 				echo '</div>';
 			}
