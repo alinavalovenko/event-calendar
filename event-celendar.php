@@ -28,7 +28,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			if ( ! in_array( 'advanced-custom-fields/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 				add_filter( 'acf/settings/path', array( $this, 'avec_acf_settings_path' ) );
 				add_filter( 'acf/settings/dir', array( $this, 'avec_acf_settings_dir' ) );
-				//add_filter('acf/settings/show_admin', '__return_false');
+				add_filter('acf/settings/show_admin', '__return_false');
 				include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
 			}
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
