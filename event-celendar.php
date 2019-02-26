@@ -16,25 +16,24 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 	if ( ! defined( 'AVEC_DIR_PATH' ) ) {
 		define( 'AVEC_DIR_PATH', plugin_dir_path( __FILE__ ) );
 	}
-	include_once 'include/controller.php';
-	include_once 'include/class-ics.php';
 
 	class AV_Event_Calendar {
 
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'avec_add_admin_page' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'avec_enqueue_scripts' ), 99 );
-			// check for plugin using plugin name
 			if ( ! in_array( 'advanced-custom-fields/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 				add_filter( 'acf/settings/path', array( $this, 'avec_acf_settings_path' ) );
 				add_filter( 'acf/settings/dir', array( $this, 'avec_acf_settings_dir' ) );
 				add_filter('acf/settings/show_admin', '__return_false');
-				include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
+				include_once( plugin_dir_path( __FILE__ ) . 'acf/acf.php' );
 			}
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
 			add_action( 'init', array( $this, 'avec_register_post_types' ) );
 			add_action( 'publish_event', array( $this, 'avec_publish_event_callback' ), 10, 2 );
 
+			include_once 'include/controller.php';
+			include_once 'include/class-ics.php';
 		}
 
 		function avec_add_admin_page() {
@@ -54,7 +53,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		}
 
 		function avec_acf_settings_dir( $dir ) {
-			$dir = AVEC_DIR_URL . '/acf/';
+			$dir = AVEC_DIR_URL . 'acf/';
 
 			return $dir;
 		}
