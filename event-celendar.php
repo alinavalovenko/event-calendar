@@ -30,8 +30,9 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 				//add_filter('acf/settings/show_admin', '__return_false');
 				include_once( plugin_dir_path( __FILE__ ) . '/acf/acf.php' );
 			}
-			//add_action( 'init', array( $this, 'avec_acf_init' ) );
-			add_shortcode('av-calendar', array($this, 'avec_calendar_render'));
+			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
+			add_action( 'init', array( $this, 'avec_register_post_types' ) );
+
 		}
 
 		function avec_add_admin_page() {
@@ -46,24 +47,108 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 
 		function avec_acf_settings_path( $path ) {
 			$path = AVEC_DIR_PATH . '/acf/';
+
 			return $path;
 		}
 
 		function avec_acf_settings_dir( $dir ) {
 			$dir = AVEC_DIR_URL . '/acf/';
+
 			return $dir;
 		}
 
-//		function avec_acf_init() {
-//			$option_page = acf_add_options_page( array(
-//				'page_title' => __( 'Event Calendar', 'avec' ),
-//				'menu_title' => __( 'Event Calendar', 'avec' ),
-//				'menu_slug'  => 'event-calendar-page',
-//			) );
-//		}
-		function avec_calendar_render(){
-			echo 'Shortcode body';
+		function avec_register_post_types() {
+			$args = array(
+				'labels'       => array(
+					'name' => 'Event'
+				),
+				'public'       => true,
+				'show_in_menu' => true,
+				'rewrite'      => false,
+				'supports'     => array( 'title' )
+			);
+			register_post_type( 'event', $args );
 		}
+
+		function avec_calendar_render() {
+			global $post;
+			$events = $this->avec_get_events_by_year();
+			$today  = time();
+			ob_start();
+			echo '<div class="calendar-wrap">';
+			foreach ( $events as $year => $events_list ) {
+				echo '<div class="calendar-year">';
+				echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
+				echo '<div class="event-table">';
+				echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
+				foreach ( $events_list as $event ) {
+					$date        = get_field( 'avec_date', $event );
+					$title       = $event->post_title;
+					$description = get_field( 'avec_decription', $event );
+					$summary     = get_field( 'avec_summary', $event );
+					echo '<div>' . $date . '</div>';
+					if ( time() < strtotime( $date ) ) {
+						echo '<div>' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
+						echo '<div><a href="' . $this->avec_create_download_link( $event ) . '">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
+					} else {
+						echo '<div><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
+						echo '<div></div>';
+					}
+
+				}
+				echo '</div>';
+				echo '</div>';
+			}
+			echo '</div>';
+			$output = ob_get_contents();
+			ob_end_clean();
+
+			return $output;
+		}
+
+		function avec_get_events_by_year() {
+			$events_sorted = array();
+			$args          = array(
+				'post_type'   => 'event',
+				'numberposts' => '-1',
+				'order'       => 'DESC',
+				'orderby'     => 'avec_date',
+				'post_status' => 'publish',
+				'meta_key'    => 'avec_date'
+			);
+
+			$events = get_posts( $args );
+
+			$last_ID   = $events[0]->ID;
+			$last_year = $this->avec_get_year_from_date( get_field( 'avec_date', $last_ID ) );
+
+			$first_ID   = end( $events )->ID;
+			$first_year = $this->avec_get_year_from_date( get_field( 'avec_date', $first_ID ) );
+			for ( $i = $last_year; $i >= $first_year; $i -- ) {
+				foreach ( $events as $event ) {
+					$event_year = $this->avec_get_year_from_date( get_field( 'avec_date', $event ) );
+					if ( $i == $event_year ) {
+						$events_sorted[ $i ][] = $event;
+					}
+
+				}
+			}
+
+			return $events_sorted;
+		}
+
+		function avec_get_year_from_date( $date ) {
+			$date = DateTime::createFromFormat( 'd.m.Y', $date );
+
+			return $date->format( 'Y' );
+		}
+
+		function avec_create_download_link( $event ) {
+			$link = '#';
+
+			return $link;
+		}
+
 	}
 
 	new AV_Event_Calendar();
