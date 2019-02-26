@@ -25,7 +25,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			if ( ! in_array( 'advanced-custom-fields/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 				add_filter( 'acf/settings/path', array( $this, 'avec_acf_settings_path' ) );
 				add_filter( 'acf/settings/dir', array( $this, 'avec_acf_settings_dir' ) );
-				add_filter('acf/settings/show_admin', '__return_false');
+				add_filter( 'acf/settings/show_admin', '__return_false' );
 				include_once( plugin_dir_path( __FILE__ ) . 'acf/acf.php' );
 			}
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
@@ -72,40 +72,44 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		}
 
 		function avec_calendar_render() {
+			$output = '';
 			$events = $this->avec_get_events_by_year();
-			ob_start();
-			echo '<div class="calendar-wrap">';
-			foreach ( $events as $year => $events_list ) {
-				echo '<div class="calendar-year">';
-				echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
-				echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
-				echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
-				echo '<div class="event-table-body">';
-				foreach ( $events_list as $event ) {
-					echo '<div class="event-table-row">';
-					$date        = get_field( 'avec_date', $event );
-					$title       = $event->post_title;
-					$description = get_field( 'avec_decription', $event );
-					echo '<div class="avec-date-value">' . $date . '</div>';
-					if ( time() < strtotime( $date ) ) {
-						$download_link = get_post_meta( $event->ID, 'evec_download_link', true );
-						echo '<div class="avec-title-value">' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
-						echo '<div class="avec-link-value"><a href="' . $download_link . '" target="_blank">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
-					} else {
-						$summary = get_field( 'avec_summary', $event );
+			if ( ! empty( $events ) ) {
+				ob_start();
+				echo '<div class="calendar-wrap">';
+				foreach ( $events as $year => $events_list ) {
+					echo '<div class="calendar-year">';
+					echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
+					echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
+					echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
+					echo '<div class="event-table-body">';
+					foreach ( $events_list as $event ) {
+						echo '<div class="event-table-row">';
+						$date        = get_field( 'avec_date', $event );
+						$title       = $event->post_title;
+						$description = get_field( 'avec_decription', $event );
+						echo '<div class="avec-date-value">' . $date . '</div>';
+						if ( time() < strtotime( $date ) ) {
+							$download_link = get_post_meta( $event->ID, 'evec_download_link', true );
+							echo '<div class="avec-title-value">' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
+							echo '<div class="avec-link-value"><a href="' . $download_link . '" target="_blank">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
+						} else {
+							$summary = get_field( 'avec_summary', $event );
 
-						echo '<div class="avec-title-value"><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
-						echo '<div></div>';
+							echo '<div class="avec-title-value"><a href="' . $summary . '" target="_blank">' . esc_html__( $title, 'avec' ) . '</a></div>';
+							echo '<div></div>';
+						}
+						echo '</div>';
 					}
+					echo '</div>';
+					echo '</div>';
 					echo '</div>';
 				}
 				echo '</div>';
-				echo '</div>';
-				echo '</div>';
+				$output = ob_get_contents();
+				ob_end_clean();
+
 			}
-			echo '</div>';
-			$output = ob_get_contents();
-			ob_end_clean();
 
 			return $output;
 		}
@@ -122,19 +126,20 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			);
 
 			$events = get_posts( $args );
+			if ( ! empty( $events ) ) {
+				$last_ID   = $events[0]->ID;
+				$last_year = $this->avec_get_year_from_date( get_field( 'avec_date', $last_ID ) );
 
-			$last_ID   = $events[0]->ID;
-			$last_year = $this->avec_get_year_from_date( get_field( 'avec_date', $last_ID ) );
+				$first_ID   = end( $events )->ID;
+				$first_year = $this->avec_get_year_from_date( get_field( 'avec_date', $first_ID ) );
+				for ( $i = $last_year; $i >= $first_year; $i -- ) {
+					foreach ( $events as $event ) {
+						$event_year = $this->avec_get_year_from_date( get_field( 'avec_date', $event ) );
+						if ( $i == $event_year ) {
+							$events_sorted[ $i ][] = $event;
+						}
 
-			$first_ID   = end( $events )->ID;
-			$first_year = $this->avec_get_year_from_date( get_field( 'avec_date', $first_ID ) );
-			for ( $i = $last_year; $i >= $first_year; $i -- ) {
-				foreach ( $events as $event ) {
-					$event_year = $this->avec_get_year_from_date( get_field( 'avec_date', $event ) );
-					if ( $i == $event_year ) {
-						$events_sorted[ $i ][] = $event;
 					}
-
 				}
 			}
 
