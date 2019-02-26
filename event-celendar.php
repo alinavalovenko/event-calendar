@@ -87,7 +87,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 					$description = get_field( 'avec_decription', $event );
 					echo '<div>' . $date . '</div>';
 					if ( time() < strtotime( $date ) ) {
-						$download_link = get_post_meta( $event, 'evec_download_link', true );
+						$download_link = get_post_meta( $event->ID, 'evec_download_link', true );
 						echo '<div>' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
 						echo '<div><a href="' . $download_link . '">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
 					} else {
