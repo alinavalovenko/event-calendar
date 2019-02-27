@@ -85,10 +85,11 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 				echo '<div class="calendar-wrap">';
 				foreach ( $events as $year => $events_list ) {
 					echo '<div class="calendar-year">';
-					echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
 					if($current_year == $year) {
+						echo '<a href="#avec-' . $year . '" class="avec-link-toggle opened">' . $year . '</a>';
 						echo '<div id="avec-' . $year . '" class="event-table">';
 					} else {
+						echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
 						echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
 					}
 					echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
