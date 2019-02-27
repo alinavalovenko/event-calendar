@@ -41,28 +41,51 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			include_once 'include/class-ics.php';
 		}
 
+		/***
+		 * Add translation files to WP Core
+		 */
 		function avec_translations() {
 			load_plugin_textdomain( 'avec', false, 'event-calendar/languages' );
 		}
 
+		/***
+		 * Connect scripts and styles
+		 */
 		function avec_enqueue_scripts() {
 			wp_enqueue_style( 'avec-style', AVEC_DIR_URL . 'assets/styles.css' );
 			wp_enqueue_script( 'jquery', 'https://code.jquery.com/jquery-3.3.1.min.js', '', '1.0.0', true );
 			wp_enqueue_script( 'avec-scripts', AVEC_DIR_URL . 'assets/scripts.js', array( 'jquery' ), '1.0.0', true );
 		}
 
+		/***
+		 * Customize acf uri path
+		 *
+		 * @param $path
+		 *
+		 * @return string
+		 */
 		function avec_acf_settings_path( $path ) {
 			$path = AVEC_DIR_PATH . '/acf/';
 
 			return $path;
 		}
 
+		/***
+		 * Customize acf directory path
+		 *
+		 * @param $dir
+		 *
+		 * @return string
+		 */
 		function avec_acf_settings_dir( $dir ) {
 			$dir = AVEC_DIR_URL . 'acf/';
 
 			return $dir;
 		}
 
+		/***
+		 * Register Event Post type
+		 */
 		function avec_register_post_types() {
 			$args = array(
 				'labels'       => array(
@@ -76,6 +99,11 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			register_post_type( 'event', $args );
 		}
 
+		/***
+		 * Shortcode body render
+		 *
+		 * @return false|string
+		 */
 		function avec_calendar_render() {
 			$output = '';
 			$current_year = date("Y");
@@ -125,6 +153,11 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			return $output;
 		}
 
+		/***
+		 * Sorting events by year
+		 *
+		 * @return array
+		 */
 		function avec_get_events_by_year() {
 			$events_sorted = array();
 			$args          = array(
@@ -157,12 +190,27 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			return $events_sorted;
 		}
 
+		/***
+		 * Convert date of the even to string with year value
+		 *
+		 * @param $date
+		 *
+		 * @return string
+		 */
 		function avec_get_year_from_date( $date ) {
 			$date = DateTime::createFromFormat( 'd.m.Y', $date );
 
 			return $date->format( 'Y' );
 		}
 
+		/***
+		 * Save link to the file to Database
+		 *
+		 * @param $post_id
+		 * @param $ics_data
+		 *
+		 * @return string
+		 */
 		function avec_create_download_link( $post_id, $ics_data ) {
 			$path      = wp_upload_dir();
 			$file_name = 'avec-' . $post_id . '.ics';
@@ -175,9 +223,13 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			return $ics_link;
 		}
 
+		/***
+		 * Create file according to event with file extension .ics
+		 *
+		 * @param $post_id
+		 * @param $post
+		 */
 		public function avec_publish_event_callback( $post_id, $post ) {
-//			header('Content-Type: text/calendar; charset=utf-8');
-//			header('Content-Disposition: attachment; filename=invite.ics');
 			if ( isset( $_POST['acf'] ) ) {
 				$ics = new ICS( array(
 					'description' => $_POST['acf']['field_5c7515bf37d87'],
