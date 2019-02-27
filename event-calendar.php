@@ -7,10 +7,11 @@
  * Author:      Alina Valovenko
  * Author URI:  http://www.valovenko.pro
  * Text Domain: avec
- * Domain Path: /languages
  * License:     GPL2
  */
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 
 	if ( ! defined( 'AVEC_DIR_URL' ) ) {
@@ -23,7 +24,6 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 	class AV_Event_Calendar {
 
 		public function __construct() {
-			add_action( 'admin_menu', array( $this, 'avec_add_admin_page' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'avec_enqueue_scripts' ), 99 );
 			if ( ! in_array( 'advanced-custom-fields/acf.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 				add_filter( 'acf/settings/path', array( $this, 'avec_acf_settings_path' ) );
@@ -34,13 +34,15 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
 			add_action( 'init', array( $this, 'avec_register_post_types' ) );
 			add_action( 'publish_event', array( $this, 'avec_publish_event_callback' ), 10, 2 );
+			add_action( 'init', array( $this, 'avec_translations' ) );
+
 
 			include_once 'include/controller.php';
 			include_once 'include/class-ics.php';
 		}
 
-		function avec_add_admin_page() {
-
+		function avec_translations() {
+			load_plugin_textdomain( 'avec', false, 'event-calendar/languages' );
 		}
 
 		function avec_enqueue_scripts() {
