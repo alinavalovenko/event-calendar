@@ -78,6 +78,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 
 		function avec_calendar_render() {
 			$output = '';
+			$current_year = date("Y");
 			$events = $this->avec_get_events_by_year();
 			if ( ! empty( $events ) ) {
 				ob_start();
@@ -85,7 +86,11 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 				foreach ( $events as $year => $events_list ) {
 					echo '<div class="calendar-year">';
 					echo '<a href="#avec-' . $year . '" class="avec-link-toggle">' . $year . '</a>';
-					echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
+					if($current_year == $year) {
+						echo '<div id="avec-' . $year . '" class="event-table">';
+					} else {
+						echo '<div id="avec-' . $year . '" class="event-table avec-hide">';
+					}
 					echo '<div class="event-table-head"><div>' . esc_html__( 'Date', 'avec' ) . '</div><div>' . esc_html__( 'Event', 'avec' ) . '</div><div>' . esc_html__( 'Link', 'avec' ) . '</div></div>';
 					echo '<div class="event-table-body">';
 					foreach ( $events_list as $event ) {
@@ -174,7 +179,6 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 //			header('Content-Disposition: attachment; filename=invite.ics');
 			if ( isset( $_POST['acf'] ) ) {
 				$ics = new ICS( array(
-					'location'    => $_POST['acf']['field_5c7534c5649fd'],
 					'description' => $_POST['acf']['field_5c7515bf37d87'],
 					'dtstart'     => $_POST['acf']['field_5c75147e53881'],
 					'summary'     => $post->post_title,
