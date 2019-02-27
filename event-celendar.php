@@ -7,6 +7,7 @@
  * Author:      Alina Valovenko
  * Author URI:  http://www.valovenko.pro
  * Text Domain: avec
+ * Domain Path: /languages
  * License:     GPL2
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
