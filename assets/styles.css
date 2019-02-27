@@ -5,13 +5,13 @@
     margin: 0;
     padding: 0;
     position: relative;
-    color: #333;
+    color: #4c4c4c;
     margin-left: 15px;
 }
 
 .calendar-wrap a {
     display: inline-block;
-    color: #d82034;
+    color: #bac50d;
     text-decoration: none;
     box-shadow: none;
     text-transform: capitalize;
@@ -20,11 +20,12 @@
     -ms-transition: color 300ms ease;
     -o-transition: color 300ms ease;
     transition: color 300ms ease;
+    outline: none;
 }
 
 .event-table {
     display: table;
-    margin: 50px auto 50px 15px;
+    margin: 50px 0 50px 35px;
     border-spacing: 2px;
     border-top: 1px solid rgba(128, 128, 128, 0.4);
     border-bottom: 1px solid rgba(128, 128, 128, 0.4);
@@ -67,23 +68,55 @@
     max-width: 130px;
     width: 130px;
 }
+.event-table-row div.avec-link-value{
+    max-width: 200px;
+    text-align: right;
+    vertical-align: middle;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.event-table-row div.avec-title-value{
+    color: #bac50d;
+    cursor: pointer;
+}
+
+.event-table-row div.avec-title-value .avec-small{
+    color: #4c4c4c;
+    font-size: 80%;
+}
 
 .calendar-wrap a.avec-link-toggle {
     font-size: 1.4rem;
     position: relative;
+    color:  #4c4c4c;
+
 }
 
+
+.calendar-wrap a.avec-link-toggle:hover{
+    color: #bac50d;
+}
+.calendar-wrap a.avec-link-toggle:hover::before{
+    background: #bac50d;
+}
 .calendar-wrap a.avec-link-toggle:before {
     content: '\002B';
-    left: -15px;
     position: relative;
+    color: #fff;
+    background: #4c4c4c;
+    padding: 0 5px;
+    margin-right: 15px;
+
 }
 
 .calendar-wrap a.avec-link-toggle.opened:before {
     content: '\2212' !important;
-    left: -15px;
     position: relative;
+    color: #fff;
+    background-color: #bac50d;
+    margin-right: 15px;
 }
+
 
 .event-table-body a:hover {
     color: #333;
@@ -91,4 +124,15 @@
 
 .avec-hide {
     display: none !important;
+}
+
+@media screen and (max-width: 620px) {
+    .calendar-wrap{
+        margin: 0;
+    }
+    .event-table{
+        margin: 0 auto;
+        padding: 0;
+        overflow: hidden;
+    }
 }

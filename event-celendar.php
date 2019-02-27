@@ -93,7 +93,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 						echo '<div class="avec-date-value">' . $date . '</div>';
 						if ( time() < strtotime( $date ) ) {
 							$download_link = get_post_meta( $event->ID, 'evec_download_link', true );
-							echo '<div class="avec-title-value">' . esc_html__( $title, 'avec' ) . '<small>' . $description . '</small></div>';
+							echo '<div class="avec-title-value">' . esc_html__( $title, 'avec' ) . '<div class="avec-small">' . $description . '</div></div>';
 							echo '<div class="avec-link-value"><a href="' . $download_link . '" target="_blank">' . esc_html__( 'add to calendar', 'avec' ) . '</a></div>';
 						} else {
 							$summary = get_field( 'avec_summary', $event );
