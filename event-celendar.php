@@ -1,13 +1,15 @@
 <?php
-/*
-	Plugin Name: Event Calendar
-	Description: Create new events and allow people add it to theirs schedule
-	Version: 1.0
-	Author: Alina Valovenko
-	Author URI: http://www.valovenko.pro
-	License: GPL2
-	Domain: avec
-*/
+/**
+ * Plugin Name: Event Calendar
+ * Plugin URI:  https://github.com/alinavalovenko/event-calendar
+ * Description: Create new events and allow people add it to theirs schedule
+ * Version:     1.0.0
+ * Author:      Alina Valovenko
+ * Author URI:  http://www.valovenko.pro
+ * Text Domain: avec
+ * License:     GPL2
+ */
+if ( ! defined( 'ABSPATH' ) ) exit;
 if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 
 	if ( ! defined( 'AVEC_DIR_URL' ) ) {
