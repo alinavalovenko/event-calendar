@@ -35,7 +35,8 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 			add_action( 'init', array( $this, 'avec_register_post_types' ) );
 			add_action( 'publish_event', array( $this, 'avec_publish_event_callback' ), 10, 2 );
 			add_action( 'init', array( $this, 'avec_translations' ) );
-
+			add_action( 'manage_event_posts_custom_column', array( $this, 'avec_event_date_column' ), 10, 2 );
+			add_filter( 'manage_event_posts_columns', array( $this, 'avec_set_event_date_column' ) );
 
 			include_once 'include/controller.php';
 			include_once 'include/class-ics.php';
@@ -105,15 +106,15 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		 * @return false|string
 		 */
 		function avec_calendar_render() {
-			$output = '';
-			$current_year = date("Y");
-			$events = $this->avec_get_events_by_year();
+			$output       = '';
+			$current_year = date( "Y" );
+			$events       = $this->avec_get_events_by_year();
 			if ( ! empty( $events ) ) {
 				ob_start();
 				echo '<div class="calendar-wrap">';
 				foreach ( $events as $year => $events_list ) {
 					echo '<div class="calendar-year">';
-					if($current_year == $year) {
+					if ( $current_year == $year ) {
 						echo '<a href="#avec-' . $year . '" class="avec-link-toggle opened">' . $year . '</a>';
 						echo '<div id="avec-' . $year . '" class="event-table">';
 					} else {
@@ -239,6 +240,39 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 
 				$this->avec_create_download_link( $post_id, $ics->to_string() );
 
+			}
+		}
+
+		/***
+		 * Add the custom columns to the event post type:
+		 *
+		 * @param $columns
+		 *
+		 * @return mixed
+		 */
+		function avec_set_event_date_column( $columns ) {
+			unset( $columns['author'] );
+			$columns['event_date'] = __( 'Event Date', 'avec' );
+			return $columns;
+		}
+
+		/***
+		 * Add the data to the custom columns for the event post type:
+		 *
+		 * @param $column
+		 * @param $post_id
+		 */
+		function avec_event_date_column( $column, $post_id ) {
+			switch ( $column ) {
+
+				case 'event_date' :
+					$event_date = get_post_meta($post_id, 'avec_date', true);
+					if ( $event_date ) {
+						echo date('d.m.Y',strtotime($event_date));
+					} else {
+						_e( 'Unable to get date of the event', 'avec' );
+					}
+					break;
 			}
 		}
 
