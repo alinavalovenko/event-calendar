@@ -7,6 +7,7 @@
  * Author:      Alina Valovenko
  * Author URI:  http://www.valovenko.pro
  * Text Domain: avec
+ * Domain Path: /languages
  * License:     GPL2
  */
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +30,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 				add_filter( 'acf/settings/path', array( $this, 'avec_acf_settings_path' ) );
 				add_filter( 'acf/settings/dir', array( $this, 'avec_acf_settings_dir' ) );
 				add_filter( 'acf/settings/show_admin', '__return_false' );
-				include_once( plugin_dir_path( __FILE__ ) . 'acf/acf.php' );
+				include_once( plugin_dir_path( __FILE__ ) . 'assets/acf/acf.php' );
 			}
 			add_shortcode( 'av-calendar', array( $this, 'avec_calendar_render' ) );
 			add_action( 'init', array( $this, 'avec_register_post_types' ) );
@@ -66,7 +67,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		 * @return string
 		 */
 		function avec_acf_settings_path( $path ) {
-			$path = AVEC_DIR_PATH . '/acf/';
+			$path = AVEC_DIR_PATH . '/assets/acf/';
 
 			return $path;
 		}
@@ -79,7 +80,7 @@ if ( ! class_exists( 'AV_Event_Calendar' ) ) {
 		 * @return string
 		 */
 		function avec_acf_settings_dir( $dir ) {
-			$dir = AVEC_DIR_URL . 'acf/';
+			$dir = AVEC_DIR_URL . 'assets/acf/';
 
 			return $dir;
 		}
